@@ -138,6 +138,7 @@ def train(opt):
                 attention_mask = attention_mask.cuda()
                 labels = labels.cuda() 
             optimizer.zero_grad()
+            print({'input_ids': input_ids, 'attention_mask': attention_mask})
             logits = model(input_ids, attention_mask=attention_mask)
             loss = criterion(logits, labels)
             loss.backward()
