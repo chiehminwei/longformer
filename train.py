@@ -79,6 +79,8 @@ def train(opt):
     opt.batch_size = opt.batch_size // opt.gradient_accumulation_steps
 
     # Logging
+    if not os.path.isdir(opt.saved_path):
+        os.makedirs(opt.saved_path)
     output_file = open(opt.saved_path + os.sep + "logs.txt", "w")
     output_file.write("Model's parameters: {}".format(vars(opt)))    
     if os.path.isdir(opt.log_path):
