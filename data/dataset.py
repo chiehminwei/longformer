@@ -28,6 +28,7 @@ class MafiascumDataset(Dataset):
     for key, item in grouped_df:
       if i == 32:
         break
+      i += 1
       posts = grouped_df.get_group(key).content.values # All the posts made by a user in a game
       label = grouped_df.get_group(key).scum.values[0] # Boolean
       label = 1 if label else 0 # Int
