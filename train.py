@@ -179,7 +179,7 @@ def train(opt):
             if opt.gradient_accumulation_steps > 1:
                 loss = loss / opt.gradient_accumulation_steps
             loss.backward()
-            if (iteration + 1) % opt.gradient_accumulation_steps == 0:
+            if true or (iteration + 1) % opt.gradient_accumulation_steps == 0:
                 optimizer.step()
                 scheduler.step()
                 training_metrics = get_evaluation(labels.cpu().numpy(), logits.cpu().detach().numpy(), list_metrics=["accuracy"])            
