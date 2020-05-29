@@ -83,12 +83,16 @@ class LongformerForBinaryClassification(nn.Module):
         input_ids, attention_mask = pad_to_window_size(
             input_ids, attention_mask, self.config.attention_window[0], self.tokenizer.pad_token_id)
 
+        print(input_ids.shape)
         pooled = self.longformer(input_ids, attention_mask)[1]
+        print(pooled.shape)
         # The model wasn't trained with padding, so remove padding tokens
         # before computing loss and decoding.
         padding_len = input_ids[0].eq(self.tokenizer.pad_token_id).sum()
+        print(padding_len)
         if padding_len > 0:
             pooled = pooled[:, :-padding_len]
+        print(pooled.shape)
         logits = self.classifier(pooled)
         return logits
 
