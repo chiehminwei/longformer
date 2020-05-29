@@ -135,7 +135,7 @@ def train(opt):
         for iteration, (input_ids, attention_mask, labels) in enumerate(training_generator):
             if torch.cuda.is_available():
                 input_ids = input_ids.cuda()
-                attention_masks = attention_masks.cuda()
+                attention_mask = attention_mask.cuda()
                 labels = labels.cuda() 
             optimizer.zero_grad()
             logits = model(input_ids, attention_mask=attention_mask)
