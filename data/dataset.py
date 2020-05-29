@@ -16,7 +16,7 @@ def pad_to_window_size(input_ids: torch.Tensor, attention_mask: torch.Tensor,
         (input_ids, attention_mask) padded to length divisible by 2 * one_sided_window_size
     '''
     print(input_ids.shape)
-    
+
 
     w = 2 * one_sided_window_size
     seqlen = input_ids.size(1)
@@ -68,8 +68,8 @@ class MafiascumDataset(Dataset):
         continue
 
       # padding seqlen to the nearest multiple of 512. Needed for the 'sliding_chunks' attention
-      all_sentences_in_game = torch.Tensor(all_sentences_in_game[:4096])
-      all_attention_masks_in_game = torch.Tensor(all_attention_masks_in_game[:4096])
+      all_sentences_in_game = torch.Tensor(all_sentences_in_game[:4096]).unsqueeze(0)
+      all_attention_masks_in_game = torch.Tensor(all_attention_masks_in_game[:4096]).unsqueeze(0)
       input_ids, attention_mask = pad_to_window_size(
         all_sentences_in_game, all_attention_masks_in_game, config.attention_window, tokenizer.pad_token_id)
 
