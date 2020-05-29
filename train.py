@@ -80,6 +80,7 @@ class LongformerForBinaryClassification(nn.Module):
         self.classifier = nn.Linear(config.hidden_size, 1)
 
     def forward(self, input_ids, attention_mask):
+        print(input_ids.shape)
         input_ids, attention_mask = pad_to_window_size(
             input_ids, attention_mask, self.config.attention_window[0], self.tokenizer.pad_token_id)
 
