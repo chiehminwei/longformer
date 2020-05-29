@@ -1,7 +1,9 @@
 import pandas as pd
 import torch
+import torch.nn.functional as F
 from torch.utils.data.dataset import Dataset
 from transformers import LongformerModel, LongformerTokenizer, LongformerConfig
+
 
 MAX_SENTENCE_LEN = 150 # hand picked for our dataset
 MAX_DOC_LEN = 4096 # limited by length of longformer
