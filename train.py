@@ -10,7 +10,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 from torch.utils.data import DataLoader
 from data.dataset import MafiascumDataset
-from transformers import LongformerModel, LongformerConfig, AdamW, get_linear_schedule_with_warmup
+from transformers import LongformerModel, LongformerTokenizer, LongformerConfig, AdamW, get_linear_schedule_with_warmup
 from sklearn import metrics
 
 
@@ -50,6 +50,25 @@ def get_evaluation(y_true, y_prob, list_metrics):
     if 'confusion_matrix' in list_metrics:
         output['confusion_matrix'] = str(metrics.confusion_matrix(y_true, y_pred))
     return output
+
+
+def pad_to_window_size(input_ids: torch.Tensor, attention_mask: torch.Tensor,
+                       one_sided_window_size: int, pad_token_id: int):
+    '''A helper function to pad tokens and mask to work with the sliding_chunks implementation of Longformer selfattention.
+    Input:
+        input_ids = torch.Tensor(bsz x seqlen): ids of wordpieces
+        attention_mask = torch.Tensor(bsz x seqlen): attention mask
+        one_sided_window_size = int: window size on one side of each token
+        pad_token_id = int: tokenizer.pad_token_id
+    Returns
+        (input_ids, attention_mask) padded to length divisible by 2 * one_sided_window_size
+    '''
+    w = 2 * one_sided_window_size
+    seqlen = input_ids.size(1)
+    padding_len = (w - seqlen % w) % w
+    input_ids = F.pad(input_ids, (0, padding_len), value=pad_token_id)
+    attention_mask = F.pad(attention_mask, (0, padding_len), value=False)  # no attention on the padding tokens
+    return input_ids, attention_mask
 
 
 class LongformerForBinaryClassification(nn.Module):
@@ -106,7 +125,7 @@ def train(opt):
 
     # Model
     config = LongformerConfig()
-    # config.attention_mode = 'sliding_chunks'
+    config.attention_mode = 'sliding_chunks'
     model = LongformerForBinaryClassification(config)
     if torch.cuda.is_available():
         model = model.cuda()
@@ -126,6 +145,8 @@ def train(opt):
                     num_training_steps = num_train_optimization_steps,
                     num_warmup_steps=opt.num_warmup_steps)
 
+    tokenizer = LongformerTokenizer.from_pretrained('longformer-base-4096')
+
     # Training
     best_loss = 1e5
     best_epoch = 0
@@ -133,6 +154,9 @@ def train(opt):
     num_iter_per_epoch = len(training_generator)
     for epoch in range(opt.num_epoches):
         for iteration, (input_ids, attention_mask, labels) in enumerate(training_generator):
+            input_ids, attention_mask = pad_to_window_size(
+                input_ids, attention_mask, config.attention_window, tokenizer.pad_token_id)
+      
             if torch.cuda.is_available():
                 input_ids = input_ids.cuda()
                 attention_mask = attention_mask.cuda()
@@ -164,6 +188,8 @@ def train(opt):
             te_pred_ls = []
             for (input_ids, attention_mask, labels) in test_generator:
                 num_sample = len(te_label)
+                input_ids, attention_mask = pad_to_window_size(
+                    input_ids, attention_mask, config.attention_window, tokenizer.pad_token_id)
                 if torch.cuda.is_available():
                     input_ids = input_ids.cuda()
                     attention_mask = attention_mask.cuda()
