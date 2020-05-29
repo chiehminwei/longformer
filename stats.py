@@ -20,14 +20,16 @@ for key, item in grouped_df:
     	        	num_sentences_in_post += 1
             if num_sentences_in_post > 0:
                 num_sentences_in_posts.append(num_sentences_in_post)
-        num_sentences_in_game.append(sum(num_sentences_in_posts))
+        # Only consider games in which user has at least said 10 sentences
+        if sum(num_sentences_in_posts) >= 10:
+            num_sentences_in_game.append(sum(num_sentences_in_posts))
 
 num_sentences_in_game = pd.Series(num_sentences_in_game)
-sentence_len = pd.Series(sentence_len)
+sentence_lens = pd.Series(sentence_lens)
 
 print("For each (user, game), the number of sentences:")
-print(num_sentences_in_post.describe())
+print(num_sentences_in_game.describe())
 
 print("")
 print("All in all, for sentences:")
-print(sentence_len.describe())
+print(sentence_lens.describe())
