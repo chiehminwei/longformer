@@ -23,5 +23,5 @@ test = pd.concat(test).reset_index(drop=True)
 if not os.path.isdir(data_save_dir):
 	os.makedirs(data_save_dir)
 
-train.to_pickle(data_save_dir + '/train.pkl')
-test.to_pickle(data_save_dir + '/test.pkl')
+train.to_pickle(data_save_dir + '/train.pkl', compression='gzip')
+test.to_pickle(data_save_dir + '/test.pkl', compression='gzip')
