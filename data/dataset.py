@@ -54,14 +54,14 @@ class MafiascumDataset(Dataset):
         sentences = post.split('\n\n')
         for sentence in sentences:
           if len(sentence) > 0:
-            input_ids = tokenizer.encode(sentence)
+            input_ids = tokenizer.encode(sentence, max_length=MAX_SENTENCE_LEN)
             # 1 for local attention, 2 for global attention, 0 for none (padding)
             # (for our task, mark <s> start of sentence with 2 to have global attention)
             attention_mask  = [1 for _ in range(len(input_ids))]
             attention_mask[0] = 2
 
-            input_ids = input_ids[:MAX_SENTENCE_LEN]
-            attention_mask = attention_mask[:MAX_SENTENCE_LEN] 
+            input_ids = input_ids
+            attention_mask = attention_mask
 
             all_sentences_in_game += input_ids
             all_attention_masks_in_game += attention_mask
