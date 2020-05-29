@@ -6,7 +6,7 @@ from transformers import LongformerModel, LongformerTokenizer, LongformerConfig
 
 
 MAX_SENTENCE_LEN = 150 # hand picked for our dataset
-MAX_DOC_LEN = 2000 # limited by length of longformer
+MAX_DOC_LEN = 200 # limited by length of longformer
 
 
 class MafiascumDataset(Dataset):
