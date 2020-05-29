@@ -80,8 +80,8 @@ class MafiascumDataset(Dataset):
       input_ids, attention_mask = pad_to_window_size(
         all_sentences_in_game, all_attention_masks_in_game, MAX_DOC_LEN, tokenizer.pad_token_id)
       
-      inputs.append(input_ids)
-      attention_masks.append(attention_mask)
+      inputs.append(input_ids.squeeze())
+      attention_masks.append(attention_mask.squeeze())
       labels.append(label)
 
     self.inputs = inputs
