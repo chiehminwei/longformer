@@ -163,8 +163,6 @@ def train(opt):
                 labels = labels.cuda() 
             optimizer.zero_grad()
             logits = model(input_ids, attention_mask=attention_mask)
-            print(type(logits), logits.shape, logits)
-            print(type(labels), labels.shape, labels)
             loss = criterion(logits, labels)
             if opt.gradient_accumulation_steps > 1:
                 loss = loss / opt.gradient_accumulation_steps

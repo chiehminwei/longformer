@@ -63,7 +63,7 @@ class MafiascumDataset(Dataset):
 
       input_ids = torch.LongTensor(all_sentences_in_game[:MAX_DOC_LEN])
       attention_mask = torch.LongTensor(all_attention_masks_in_game[:MAX_DOC_LEN])
-      label = torch.LongTensor([label])
+      label = torch.FloatTensor([label])
 
       inputs.append(input_ids)
       attention_masks.append(attention_mask)
