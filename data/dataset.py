@@ -3,6 +3,8 @@ import torch
 from torch.utils.data.dataset import Dataset
 from transformers import LongformerModel, LongformerTokenizer, LongformerConfig
 
+MAX_SENTENCE_LEN = 150 # hand picked for our dataset
+MAX_DOC_LEN = 4096 # limited by length of longformer
 
 def pad_to_window_size(input_ids: torch.Tensor, attention_mask: torch.Tensor,
                        one_sided_window_size: int, pad_token_id: int):
@@ -33,6 +35,7 @@ class MafiascumDataset(Dataset):
 
     tokenizer = LongformerTokenizer.from_pretrained('longformer-base-4096')
     config = LongformerConfig()
+    print(config)
 
     df = pd.read_pickle(data_path, compression="gzip")
     grouped_df = df.groupby(["author", "game_id"])
@@ -59,6 +62,9 @@ class MafiascumDataset(Dataset):
             attention_mask  = [1 for _ in range(len(input_ids))]
             attention_mask[0] = 2
 
+            input_ids = input_ids[:MAX_SENTENCE_LEN]
+            attention_mask =attention_mask[:MAX_SENTENCE_LEN] 
+
             all_sentences_in_game += input_ids
             all_attention_masks_in_game += attention_mask
             num_sentences_in_game += 1
@@ -68,8 +74,8 @@ class MafiascumDataset(Dataset):
         continue
 
       # padding seqlen to the nearest multiple of 512. Needed for the 'sliding_chunks' attention
-      all_sentences_in_game = torch.Tensor(all_sentences_in_game[:4096]).unsqueeze(0)
-      all_attention_masks_in_game = torch.Tensor(all_attention_masks_in_game[:4096]).unsqueeze(0)
+      all_sentences_in_game = torch.Tensor(all_sentences_in_game[:MAX_DOC_LEN]).unsqueeze(0)
+      all_attention_masks_in_game = torch.Tensor(all_attention_masks_in_game[:MAX_DOC_LEN]).unsqueeze(0)
       input_ids, attention_mask = pad_to_window_size(
         all_sentences_in_game, all_attention_masks_in_game, config.attention_window, tokenizer.pad_token_id)
 
