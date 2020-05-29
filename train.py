@@ -81,7 +81,7 @@ class LongformerForBinaryClassification(nn.Module):
 
     def forward(self, input_ids, attention_mask):
         input_ids, attention_mask = pad_to_window_size(
-            input_ids, attention_mask, self.config.attention_window, self.tokenizer.pad_token_id)
+            input_ids, attention_mask, self.config.attention_window[0], self.tokenizer.pad_token_id)
 
         pooled = self.longformer(input_ids, attention_mask)[1]
         # The model wasn't trained with padding, so remove padding tokens
