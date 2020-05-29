@@ -6,7 +6,7 @@ from transformers import LongformerModel, LongformerTokenizer, LongformerConfig
 
 
 MAX_SENTENCE_LEN = 150 # hand picked for our dataset
-MAX_DOC_LEN = 200 # limited by length of longformer
+MAX_DOC_LEN = 4096 # limited by length of longformer
 
 
 class MafiascumDataset(Dataset):
@@ -24,7 +24,10 @@ class MafiascumDataset(Dataset):
     inputs = []
     attention_masks = []
 
+    i = 0
     for key, item in grouped_df:
+      if i == 32:
+        break
       posts = grouped_df.get_group(key).content.values # All the posts made by a user in a game
       label = grouped_df.get_group(key).scum.values[0] # Boolean
       label = 1 if label else 0 # Int
