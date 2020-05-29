@@ -9,8 +9,6 @@ MAX_SENTENCE_LEN = 150 # hand picked for our dataset
 MAX_DOC_LEN = 2000 # limited by length of longformer
 
 
-
-
 class MafiascumDataset(Dataset):
 
   def __init__(self, data_path):
@@ -26,10 +24,7 @@ class MafiascumDataset(Dataset):
     inputs = []
     attention_masks = []
 
-    i = 0
     for key, item in grouped_df:
-      if i == 32:
-        break
       posts = grouped_df.get_group(key).content.values # All the posts made by a user in a game
       label = grouped_df.get_group(key).scum.values[0] # Boolean
       label = 1 if label else 0 # Int

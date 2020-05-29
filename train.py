@@ -38,15 +38,15 @@ def get_args():
     return args
 
 
-pad_token_id = LongformerTokenizer.from_pretrained('longformer-base-4096').pad_token_id
-def pad_collate(batch):
-  (input_ids, attention_mask, labels) = zip(*batch)
+# pad_token_id = LongformerTokenizer.from_pretrained('longformer-base-4096').pad_token_id
+# def pad_collate(batch):
+#   (input_ids, attention_mask, labels) = zip(*batch)
   
-  input_ids_pad = pad_sequence(input_ids, batch_first=True, padding_value=pad_token_id)
-  attention_mask_pad = pad_sequence(attention_mask, batch_first=True, padding_value=pad_token_id)  
-  labels_pad = pad_sequence(labels, batch_first=True, padding_value=pad_token_id)
+#   input_ids_pad = pad_sequence(input_ids, batch_first=True, padding_value=pad_token_id)
+#   attention_mask_pad = pad_sequence(attention_mask, batch_first=True, padding_value=pad_token_id)  
+#   labels_pad = pad_sequence(labels, batch_first=True, padding_value=pad_token_id)
 
-  return input_ids_pad, attention_mask_pad, labels_pad
+#   return input_ids_pad, attention_mask_pad, labels_pad
 
 
 def get_evaluation(y_true, y_prob, list_metrics):
