@@ -1,5 +1,6 @@
 import pandas as pd
 import torch
+from torch.utils.data.dataset import Dataset
 from transformers import LongformerModel, LongformerTokenizer, LongformerConfig
 
 
