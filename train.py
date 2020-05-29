@@ -134,11 +134,11 @@ def train(opt):
 
     train_data_path = opt.train_set
     training_set = MafiascumDataset(train_data_path)
-    training_generator = DataLoader(training_set, collate_fn=pad_collate, **training_params)
+    training_generator = DataLoader(training_set, **training_params)
 
     test_data_path = opt.test_set
     test_set = MafiascumDataset(test_data_path)
-    test_generator = DataLoader(test_set, collate_fn=pad_collate, **test_params)
+    test_generator = DataLoader(test_set, **test_params)
 
     # Model
     config = LongformerConfig.from_pretrained('longformer-base-4096')
