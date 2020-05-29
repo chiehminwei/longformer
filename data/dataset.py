@@ -67,8 +67,8 @@ class MafiascumDataset(Dataset):
       # padding seqlen to the nearest multiple of 512. Needed for the 'sliding_chunks' attention
       all_sentences_in_game = torch.Tensor(all_sentences_in_game)
       all_attention_masks_in_game = torch.Tensor(all_attention_masks_in_game)
-      input_ids, attention_mask = pad_to_window_size(
-        all_sentences_in_game, all_attention_masks_in_game, config.attention_window, tokenizer.pad_token_id)
+      # input_ids, attention_mask = pad_to_window_size(
+      #   all_sentences_in_game, all_attention_masks_in_game, config.attention_window, tokenizer.pad_token_id)
 
       inputs.append(input_ids)
       attention_masks.append(attention_mask)

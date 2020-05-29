@@ -106,7 +106,7 @@ def train(opt):
 
     # Model
     config = LongformerConfig()
-    config.attention_mode = 'sliding_chunks'
+    # config.attention_mode = 'sliding_chunks'
     model = LongformerForBinaryClassification(config)
     if torch.cuda.is_available():
         model = model.cuda()
