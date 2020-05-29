@@ -18,10 +18,10 @@ from torch.nn.utils.rnn import pad_sequence
 def get_args():
     parser = argparse.ArgumentParser(
         """Implementation of the model described in the paper: Longformer""")
-    parser.add_argument("--batch_size", type=int, default=16)
+    parser.add_argument("--batch_size", type=int, default=32)
     parser.add_argument("--num_epoches", type=int, default=100)
     parser.add_argument("--lr", type=float, default=3e-5)
-    parser.add_argument("--gradient_accumulation_steps", type=int, default=1,
+    parser.add_argument("--gradient_accumulation_steps", type=int, default=32,
                         help='Number of updates steps to accumulate before performing a backward/update pass')
     parser.add_argument("--num_warmup_steps", type=int, default=500)
     parser.add_argument("--es_min_delta", type=float, default=0.0,
