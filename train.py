@@ -134,7 +134,7 @@ def train(opt):
     for epoch in range(opt.num_epoches):
         for iteration, (input_ids, attention_mask, labels) in enumerate(training_generator):
             if torch.cuda.is_available():
-                inputs = inputs.cuda()
+                input_ids = input_ids.cuda()
                 attention_masks = attention_masks.cuda()
                 labels = labels.cuda() 
             optimizer.zero_grad()
