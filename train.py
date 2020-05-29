@@ -12,6 +12,7 @@ from torch.utils.data import DataLoader
 from data.dataset import MafiascumDataset
 from transformers import LongformerModel, LongformerTokenizer, LongformerConfig, AdamW, get_linear_schedule_with_warmup
 from sklearn import metrics
+from torch.nn.utils.rnn import pad_sequence
 
 
 def get_args():
@@ -20,7 +21,7 @@ def get_args():
     parser.add_argument("--batch_size", type=int, default=32)
     parser.add_argument("--num_epoches", type=int, default=100)
     parser.add_argument("--lr", type=float, default=3e-5)
-    parser.add_argument("--gradient_accumulation_steps", type=int, default=32,
+    parser.add_argument("--gradient_accumulation_steps", type=int, default=1,
                         help='Number of updates steps to accumulate before performing a backward/update pass')
     parser.add_argument("--num_warmup_steps", type=int, default=500)
     parser.add_argument("--es_min_delta", type=float, default=0.0,
@@ -35,6 +36,17 @@ def get_args():
     parser.add_argument('--seed', type=int, default=1234)
     args = parser.parse_args()
     return args
+
+
+pad_token_id = LongformerTokenizer.from_pretrained('longformer-base-4096').pad_token_id
+def pad_collate(batch):
+  (input_ids, attention_mask, labels) = zip(*batch)
+  
+  input_ids_pad = pad_sequence(input_ids, batch_first=True, padding_value=pad_token_id)
+  attention_mask_pad = pad_sequence(attention_mask, batch_first=True, padding_value=pad_token_id)  
+  labels_pad = pad_sequence(labels, batch_first=True, padding_value=pad_token_id)
+
+  return input_ids_pad, attention_mask_pad, labels_pad
 
 
 def get_evaluation(y_true, y_prob, list_metrics):
@@ -122,11 +134,11 @@ def train(opt):
 
     train_data_path = opt.train_set
     training_set = MafiascumDataset(train_data_path)
-    training_generator = DataLoader(training_set, **training_params)
+    training_generator = DataLoader(training_set, collate_fn=pad_collate, **training_params)
 
     test_data_path = opt.test_set
     test_set = MafiascumDataset(test_data_path)
-    test_generator = DataLoader(test_set, **test_params)
+    test_generator = DataLoader(test_set, collate_fn=pad_collate, **test_params)
 
     # Model
     config = LongformerConfig.from_pretrained('longformer-base-4096')
@@ -170,7 +182,7 @@ def train(opt):
             if (iteration + 1) % opt.gradient_accumulation_steps == 0:
                 optimizer.step()
                 scheduler.step()
-                training_metrics = get_evaluation(label.cpu().numpy(), logits.cpu().detach().numpy(), list_metrics=["accuracy"])            
+                training_metrics = get_evaluation(labels.cpu().numpy(), logits.cpu().detach().numpy(), list_metrics=["accuracy"])            
                 print("Epoch: {}/{}, Iteration: {}/{}, Lr: {}, Loss: {}, Accuracy: {}".format(
                     epoch + 1,
                     opt.num_epoches,
