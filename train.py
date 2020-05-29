@@ -135,8 +135,8 @@ def train(opt):
     test_generator = DataLoader(test_set, **test_params)
 
     # Model
-    config = LongformerConfig()
-    # config.attention_mode = 'sliding_chunks'
+    config = LongformerConfig.from_pretrained('longformer-base-4096')
+    config.attention_mode = 'sliding_chunks'
     model = LongformerForBinaryClassification(config)
     if torch.cuda.is_available():
         model = model.cuda()
@@ -170,19 +170,23 @@ def train(opt):
             optimizer.zero_grad()
             logits = model(input_ids, attention_mask=attention_mask)
             loss = criterion(logits, labels)
+            if opt.gradient_accumulation_steps > 1:
+                loss = loss / opt.gradient_accumulation_steps
             loss.backward()
-            optimizer.step()
-            scheduler.step()
-            training_metrics = get_evaluation(label.cpu().numpy(), logits.cpu().detach().numpy(), list_metrics=["accuracy"])            
-            print("Epoch: {}/{}, Iteration: {}/{}, Lr: {}, Loss: {}, Accuracy: {}".format(
-                epoch + 1,
-                opt.num_epoches,
-                iteration + 1,
-                num_iter_per_epoch,
-                optimizer.param_groups[0]['lr'],
-                loss, training_metrics["accuracy"]))
-            writer.add_scalar('Train/Loss', loss, epoch * num_iter_per_epoch + iteration)
-            writer.add_scalar('Train/Accuracy', training_metrics["accuracy"], epoch * num_iter_per_epoch + iteration)
+            if (iteration + 1) % opt.gradient_accumulation_steps == 0:
+                optimizer.step()
+                scheduler.step()
+                training_metrics = get_evaluation(label.cpu().numpy(), logits.cpu().detach().numpy(), list_metrics=["accuracy"])            
+                print("Epoch: {}/{}, Iteration: {}/{}, Lr: {}, Loss: {}, Accuracy: {}".format(
+                    epoch + 1,
+                    opt.num_epoches,
+                    iteration + 1,
+                    num_iter_per_epoch,
+                    optimizer.param_groups[0]['lr'],
+                    loss, training_metrics["accuracy"]))
+                writer.add_scalar('Train/Loss', loss, epoch * num_iter_per_epoch + iteration)
+                writer.add_scalar('Train/Accuracy', training_metrics["accuracy"], epoch * num_iter_per_epoch + iteration)
+        
         if epoch % opt.test_interval == 0:
             model.eval()
             loss_ls = []
