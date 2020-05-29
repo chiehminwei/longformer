@@ -210,7 +210,7 @@ def train(opt):
             te_label_ls = []
             te_pred_ls = []
             for (input_ids, attention_mask, labels) in test_generator:
-                num_sample = len(te_label)
+                num_sample = len(labels)
                 if torch.cuda.is_available():
                     input_ids = input_ids.cuda()
                     attention_mask = attention_mask.cuda()
