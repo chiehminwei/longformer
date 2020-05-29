@@ -163,6 +163,10 @@ def train(opt):
                     num_warmup_steps=opt.num_warmup_steps)
 
     # Training
+    if opt.gradient_accumulation_steps > 1:
+        labels_mini_batch = []
+        logits_mini_batch = []
+
     best_loss = 1e5
     best_epoch = 0
     model.train()
@@ -178,11 +182,18 @@ def train(opt):
             loss = criterion(logits, labels)
             if opt.gradient_accumulation_steps > 1:
                 loss = loss / opt.gradient_accumulation_steps
+                labels_mini_batch.append(labels)
+                logits_mini_batch.append(logits)
             loss.backward()
             if (iteration + 1) % opt.gradient_accumulation_steps == 0:
                 optimizer.step()
                 scheduler.step()
-                training_metrics = get_evaluation(labels.cpu().numpy(), logits.cpu().detach().numpy(), list_metrics=["accuracy"])            
+                if opt.gradient_accumulation_steps > 1:
+                    labels = torch.cat(labels_mini_batch)
+                    logits = torch.cat(logits_mini_batch)
+                    labels_mini_batch = []
+                    logits_mini_batch = []
+                training_metrics = get_evaluation(labels.cpu().numpy(), logits.cpu().detach().numpy(), list_metrics=["accuracy"])    
                 print("Epoch: {}/{}, Iteration: {}/{}, Lr: {}, Loss: {}, Accuracy: {}".format(
                     epoch + 1,
                     opt.num_epoches,
