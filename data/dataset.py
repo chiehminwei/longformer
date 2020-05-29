@@ -68,7 +68,7 @@ class MafiascumDataset(Dataset):
       all_sentences_in_game = torch.Tensor(all_sentences_in_game)
       all_attention_masks_in_game = torch.Tensor(all_attention_masks_in_game)
       input_ids, attention_mask = pad_to_window_size(
-        all_sentences_in_game, all_attention_masks_in_game, config.attention_window[0], tokenizer.pad_token_id)
+        all_sentences_in_game, all_attention_masks_in_game, config.attention_window, tokenizer.pad_token_id)
 
       inputs.append(input_ids)
       attention_masks.append(attention_mask)
