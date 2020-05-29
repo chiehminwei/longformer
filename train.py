@@ -189,8 +189,8 @@ def train(opt):
                 optimizer.step()
                 scheduler.step()
                 if opt.gradient_accumulation_steps > 1:
-                    labels = torch.cat(labels_mini_batch)
-                    logits = torch.cat(logits_mini_batch)
+                    labels = torch.cat(labels_mini_batch, dim=0)
+                    logits = torch.cat(logits_mini_batch, dim=0)
                     labels_mini_batch = []
                     logits_mini_batch = []
                 training_metrics = get_evaluation(labels.cpu().numpy(), logits.cpu().detach().numpy(), list_metrics=["accuracy"])    
