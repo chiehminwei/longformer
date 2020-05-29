@@ -38,21 +38,24 @@ class MafiascumDataset(Dataset):
       all_sentences_in_game = []
       all_attention_masks_in_game = []
       for post in posts:
-        sentences = post.split('\n\n')
-        for sentence in sentences:
-          if len(sentence) > 0:
-            input_ids = tokenizer.encode(sentence, max_length=MAX_SENTENCE_LEN)
-            # 1 for local attention, 2 for global attention, 0 for none (padding)
-            # (for our task, mark <s> start of sentence with 2 to have global attention)
-            attention_mask  = [1 for _ in range(len(input_ids))]
-            attention_mask[0] = 2
+        if len(posts) > 0: # Only consider games where user has spoken at least once
 
-            input_ids = input_ids
-            attention_mask = attention_mask
+          sentences = post.split('\n\n')
+          for sentence in sentences:
+            sentence = sentence.strip()
+            if len(sentence) > 0:
+              input_ids = tokenizer.encode(sentence, max_length=MAX_SENTENCE_LEN)
+              # 1 for local attention, 2 for global attention, 0 for none (padding)
+              # (for our task, mark <s> start of sentence with 2 to have global attention)
+              attention_mask  = [1 for _ in range(len(input_ids))]
+              attention_mask[0] = 2
 
-            all_sentences_in_game += input_ids
-            all_attention_masks_in_game += attention_mask
-            num_sentences_in_game += 1
+              input_ids = input_ids
+              attention_mask = attention_mask
+
+              all_sentences_in_game += input_ids
+              all_attention_masks_in_game += attention_mask
+              num_sentences_in_game += 1
 
       # If the player said less than 10 sentences in a game, we ignore this sample
       if num_sentences_in_game < 10:
