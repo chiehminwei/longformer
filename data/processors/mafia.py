@@ -56,6 +56,8 @@ def mafia_convert_examples_to_features(
     tokenizer: PreTrainedTokenizer,
     max_length: Optional[int] = None,
     max_sentence_length: Optional[int] = None,
+    attention_mode: Optional[str] = None,
+    attention_window: Optional[int] = None,
     task=None,
     label_list=None,
     output_mode=None,
