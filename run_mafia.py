@@ -27,7 +27,7 @@ import numpy as np
 from sklearn.metrics import f1_score        
 
 from data.dataset2 import MafiascumDataset, MafiaDataTrainingArguments
-from .trainer import Trainer
+from data.trainer import Trainer
 from transformers import AutoConfig, AutoModelForSequenceClassification, AutoTokenizer, EvalPrediction
 from transformers import (
     HfArgumentParser,
