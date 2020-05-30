@@ -21,7 +21,7 @@ test_pivot = train_pivot + int(len(groups) * 0.15)
 
 train = groups[:train_pivot]
 dev = groups[train_pivot:test_pivot]
-test = groups[dev:test_pivot:]
+test = groups[test_pivot:]
 
 train = pd.concat(train).reset_index(drop=True)
 dev = pd.concat(dev).reset_index(drop=True)
