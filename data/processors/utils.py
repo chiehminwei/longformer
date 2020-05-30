@@ -21,7 +21,7 @@ import logging
 from dataclasses import dataclass
 from typing import List, Optional, Union
 
-from ...file_utils import is_tf_available, is_torch_available
+from .file_utils import is_tf_available, is_torch_available
 
 
 logger = logging.getLogger(__name__)
