@@ -27,10 +27,9 @@ import numpy as np
 from sklearn.metrics import f1_score        
 
 from data.dataset2 import MafiascumDataset, MafiaDataTrainingArguments
-from data.trainer import Trainer
+from src.trainer import Trainer
 
-import torch
-from .src.model import LongformerForSequenceClassification
+from src.model import LongformerForSequenceClassification
 from longformer.longformer import LongformerConfig
 from transformers import RobertaTokenizer
 
