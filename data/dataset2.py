@@ -13,7 +13,7 @@ from torch.utils.data.dataset import Dataset
 from .processors.tokenization_utils import PreTrainedTokenizer
 from .processors.utils import InputFeatures
 
-from .processors.mafia import mafia_convert_examples_to_features
+from .processors.mafia import mafia_convert_examples_to_features, MafiaProcessor
 
 
 logger = logging.getLogger(__name__)
