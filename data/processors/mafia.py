@@ -210,7 +210,7 @@ class MafiaProcessor(DataProcessor):
         return ["0", "1"]
 
     def _create_examples(self, data_path, set_type):
-    """Creates examples for the training, dev and test sets."""
+        """Creates examples for the training, dev and test sets."""
         test_mode = set_type == "test"
 
         df = pd.read_pickle(data_path, compression="gzip")
