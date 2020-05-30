@@ -156,7 +156,7 @@ class Trainer:
         if self.train_dataset is None:
             raise ValueError("Trainer: training requires a train_dataset.")
         
-        train_sampler = RandomSampler(dataset)
+        train_sampler = RandomSampler(self.train_dataset)
 
         data_loader = DataLoader(
             self.train_dataset,
