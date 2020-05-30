@@ -115,12 +115,11 @@ def main():
     # The .from_pretrained methods guarantee that only one local process can concurrently
     # download model & vocab.
     
-    config = LongformerConfig.from_pretrained('longformer-base-4096/', cache_dir=model_args.cache_dir)
+    config = LongformerConfig.from_pretrained('longformer-base-4096/')
     config.num_labels = num_labels
     config.attention_mode = 'sliding_chunks'
-    config.cache_dir = model_args.cache_dir
 
-    tokenizer = RobertaTokenizer.from_pretrained('roberta-base', cache_dir = model_args.cache_dir)
+    tokenizer = RobertaTokenizer.from_pretrained('roberta-base')
 
     model = LongformerForSequenceClassification(config)
 

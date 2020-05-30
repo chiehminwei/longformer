@@ -9,7 +9,7 @@ class LongformerForSequenceClassification(nn.Module):
     config_class = LongformerConfig
 
     def __init__(self, config):
-        super().__init__(config)
+        super().__init__()
         self.num_labels = config.num_labels
         self.longformer = Longformer.from_pretrained('../longformer-base-4096/', config=config)
         self.classifier = LongformerClassificationHead(config)
