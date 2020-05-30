@@ -120,6 +120,7 @@ def main():
     config.attention_mode = 'sliding_chunks'
 
     tokenizer = RobertaTokenizer.from_pretrained('roberta-base')
+    tokenizer.model_max_length = config.max_position_embeddings
 
     model = LongformerForSequenceClassification(config)
 
