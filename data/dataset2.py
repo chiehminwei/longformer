@@ -30,7 +30,7 @@ class MafiaDataTrainingArguments:
 
     task_name: str = field(metadata={"help": "The name of the task to train on: " + "mafia"})
     data_dir: str = field(
-        metadata={"help": "The input data dir. Should contain the .tsv files (or other data files) for the task."}
+        metadata={"help": "The input data dir. Should contain the .pkl files (or other data files) for the task."}
     )
     max_seq_length: int = field(
         default=4096,
