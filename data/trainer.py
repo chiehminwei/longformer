@@ -126,6 +126,7 @@ class Trainer:
         """
         self.model = model.to(device)
         self.args = args
+        self.device = device
         if data_collator is not None:
             self.data_collator = data_collator
         else:
