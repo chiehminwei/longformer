@@ -108,6 +108,7 @@ class Trainer:
         self,
         model: PreTrainedModel,
         args: TrainingArguments,
+        device,
         data_collator: Optional[DataCollator] = None,
         train_dataset: Optional[Dataset] = None,
         eval_dataset: Optional[Dataset] = None,
@@ -123,7 +124,7 @@ class Trainer:
             prediction_loss_only:
                 (Optional) in evaluation and prediction, only return the loss
         """
-        self.model = model.to(args.device)
+        self.model = model.to(device)
         self.args = args
         if data_collator is not None:
             self.data_collator = data_collator
@@ -257,7 +258,7 @@ class Trainer:
         ):
             # Load in optimizer and scheduler states
             optimizer.load_state_dict(
-                torch.load(os.path.join(model_path, "optimizer.pt"), map_location=self.args.device)
+                torch.load(os.path.join(model_path, "optimizer.pt"), map_location=self.device)
             )
             scheduler.load_state_dict(torch.load(os.path.join(model_path, "scheduler.pt")))
 
@@ -402,7 +403,7 @@ class Trainer:
     ) -> float:
         model.train()
         for k, v in inputs.items():
-            inputs[k] = v.to(self.args.device)
+            inputs[k] = v.to(self.device)
 
         outputs = model(**inputs)
         loss = outputs[0]  # model outputs are always tuple in transformers (see doc)
@@ -516,7 +517,7 @@ class Trainer:
             has_labels = any(inputs.get(k) is not None for k in ["labels", "lm_labels", "masked_lm_labels"])
 
             for k, v in inputs.items():
-                inputs[k] = v.to(self.args.device)
+                inputs[k] = v.to(self.device)
 
             with torch.no_grad():
                 outputs = model(**inputs)
