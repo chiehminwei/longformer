@@ -63,16 +63,11 @@ class LongformerForSequenceClassification(nn.Module):
 
         """
 
-        if global_attention_mask is None:
-            logger.info("Initializing global attention on CLS token...")
-            global_attention_mask = torch.zeros_like(input_ids)
-            # global attention on cls token
-            global_attention_mask[:, 0] = 1
+        attention_mask = attention_mask * (global_attention_mask + 1)
 
         outputs = self.longformer(
             input_ids,
             attention_mask=attention_mask,
-            global_attention_mask=global_attention_mask,
             token_type_ids=token_type_ids,
             position_ids=position_ids,
             inputs_embeds=inputs_embeds,
