@@ -128,6 +128,7 @@ def main():
     import torch_xla.core.xla_model as xm
     device = xm.xla_device(n=1)
     model = model.to(device)
+    print("model movedd to tpu!!!")
 
     # Get datasets
     train_dataset = MafiascumDataset(data_args, tokenizer=tokenizer) if training_args.do_train else None
