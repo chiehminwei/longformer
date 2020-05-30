@@ -20,6 +20,7 @@ import os
 from enum import Enum
 from typing import List, Optional, Union
 import pandas as pd
+import torch
 
 from .tokenization_utils import PreTrainedTokenizer
 from .utils import DataProcessor, InputExample, InputFeatures
