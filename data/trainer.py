@@ -405,10 +405,10 @@ class Trainer:
         model.train()
         for k, v in inputs.items():
             inputs[k] = v.to(self.device)
-        print("Beautiful")
-        print(inputs)
+            print(k, v.shape)
 
         outputs = model(**inputs)
+        print("output ok!")
         loss = outputs[0]  # model outputs are always tuple in transformers (see doc)
 
         if self.args.n_gpu > 1:
