@@ -404,9 +404,9 @@ class Trainer:
     ) -> float:
         model.train()
         for k, v in inputs.items():
-            print(k, v, v.shape)
-        for k, v in inputs.items():
             inputs[k] = v.to(self.device)
+        print("Beautiful")
+        print(inputs)
 
         outputs = model(**inputs)
         loss = outputs[0]  # model outputs are always tuple in transformers (see doc)
