@@ -27,10 +27,11 @@ import numpy as np
 from sklearn.metrics import f1_score        
 
 from data.dataset2 import MafiascumDataset, MafiaDataTrainingArguments
+from .trainer import Trainer
 from transformers import AutoConfig, AutoModelForSequenceClassification, AutoTokenizer, EvalPrediction
 from transformers import (
     HfArgumentParser,
-    Trainer,
+    # Trainer,
     TrainingArguments,
     set_seed,
 )
@@ -123,12 +124,7 @@ def main():
         from_tf=bool(".ckpt" in model_args.model_name_or_path),
         config=config,
         cache_dir=model_args.cache_dir,
-    )
-
-    import torch_xla.core.xla_model as xm
-    device = xm.xla_device(n=1)
-    model = model.to(device)
-    print("model movedd to tpu!!!")
+    )    
 
     # Get datasets
     train_dataset = MafiascumDataset(data_args, tokenizer=tokenizer) if training_args.do_train else None
@@ -148,6 +144,10 @@ def main():
             }
         preds = np.argmax(p.predictions, axis=1)
         return acc_and_f1(preds, p.label_ids)
+
+    import torch_xla.core.xla_model as xm
+    device = xm.xla_device(n=1)
+    training_args.device = device
 
     # Initialize our Trainer
     trainer = Trainer(
