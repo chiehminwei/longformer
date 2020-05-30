@@ -147,12 +147,13 @@ def main():
 
     import torch_xla.core.xla_model as xm
     device = xm.xla_device(n=1)
-    training_args.device = device
+    # training_args.device = device
 
     # Initialize our Trainer
     trainer = Trainer(
         model=model,
         args=training_args,
+        device=device,
         train_dataset=train_dataset,
         eval_dataset=eval_dataset,
         compute_metrics=compute_metrics,
