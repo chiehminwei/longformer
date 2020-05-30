@@ -125,6 +125,10 @@ def main():
         cache_dir=model_args.cache_dir,
     )
 
+    import torch_xla.core.xla_model as xm
+    device = xm.xla_device(n=1)
+    model = model.to(device)
+
     # Get datasets
     train_dataset = MafiascumDataset(data_args, tokenizer=tokenizer) if training_args.do_train else None
     eval_dataset = MafiascumDataset(data_args, tokenizer=tokenizer, mode="dev") if training_args.do_eval else None
