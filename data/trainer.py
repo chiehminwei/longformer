@@ -404,6 +404,8 @@ class Trainer:
     ) -> float:
         model.train()
         for k, v in inputs.items():
+            print(k, v)
+        for k, v in inputs.items():
             inputs[k] = v.to(self.device)
 
         outputs = model(**inputs)
