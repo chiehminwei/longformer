@@ -28,7 +28,13 @@ from sklearn.metrics import f1_score
 
 from data.dataset2 import MafiascumDataset, MafiaDataTrainingArguments
 from data.trainer import Trainer
-from transformers import AutoConfig, AutoModelForSequenceClassification, AutoTokenizer, EvalPrediction
+
+import torch
+from .src.model import LongformerForSequenceClassification
+from longformer.longformer import LongformerConfig
+from transformers import RobertaTokenizer
+
+from transformers import EvalPrediction
 from transformers import (
     HfArgumentParser,
     # Trainer,
@@ -109,22 +115,15 @@ def main():
     # Distributed training:
     # The .from_pretrained methods guarantee that only one local process can concurrently
     # download model & vocab.
+    
+    config = LongformerConfig.from_pretrained('longformer-base-4096/', cache_dir=model_args.cache_dir)
+    config.num_labels = num_labels
+    config.attention_mode = 'sliding_chunks'
+    config.cache_dir = model_args.cache_dir
 
-    config = AutoConfig.from_pretrained(
-        model_args.config_name if model_args.config_name else model_args.model_name_or_path,
-        num_labels=num_labels,
-        cache_dir=model_args.cache_dir,
-    )
-    tokenizer = AutoTokenizer.from_pretrained(
-        model_args.tokenizer_name if model_args.tokenizer_name else model_args.model_name_or_path,
-        cache_dir=model_args.cache_dir,
-    )
-    model = AutoModelForSequenceClassification.from_pretrained(
-        model_args.model_name_or_path,
-        from_tf=bool(".ckpt" in model_args.model_name_or_path),
-        config=config,
-        cache_dir=model_args.cache_dir,
-    )    
+    tokenizer = RobertaTokenizer.from_pretrained('roberta-base', cache_dir = model_args.cache_dir)
+
+    model = LongformerForSequenceClassification(config)
 
     # Get datasets
     train_dataset = MafiascumDataset(data_args, tokenizer=tokenizer) if training_args.do_train else None
