@@ -356,9 +356,10 @@ class Trainer:
                         self._log(logs)
 
                         if self.args.evaluate_during_training:
-                            self.evaluate()
+                            output = self.evaluate()
+                            # PredictionOutput(predictions=preds, label_ids=label_ids, metrics=metrics)
                             
-                            predictions = self.predict(test_dataset=self.eval_dataset).predictions
+                            predictions = output.predictions
                             # For classification
                             predictions = np.argmax(predictions, axis=1)
                             
@@ -539,7 +540,7 @@ class Trainer:
         #     # tpu-comment: Logging debug metrics for PyTorch/XLA (compile, execute times, ops, etc.)
         #     xm.master_print(met.metrics_report())
 
-        return output.metrics
+        return output
 
     def predict(self, test_dataset: Dataset) -> PredictionOutput:
         """

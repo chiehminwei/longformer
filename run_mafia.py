@@ -177,7 +177,7 @@ def main():
 
         eval_datasets = [eval_dataset]
         for eval_dataset in eval_datasets:
-            eval_result = trainer.evaluate(eval_dataset=eval_dataset)
+            eval_result = trainer.evaluate(eval_dataset=eval_dataset).metrics
 
             output_eval_file = os.path.join(
                 training_args.output_dir, f"eval_results_{eval_dataset.args.task_name}.txt"
