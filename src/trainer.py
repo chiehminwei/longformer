@@ -26,7 +26,6 @@ from transformers import TrainingArguments
 
 import torch_xla.core.xla_model as xm
 import torch_xla.debug.metrics as met
-import torch_xla.distributed.parallel_loader as pl
 
 
 from typing import Dict, NamedTuple, Optional
