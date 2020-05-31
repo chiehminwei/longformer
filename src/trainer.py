@@ -356,7 +356,7 @@ class Trainer:
                         self._log(logs)
 
                         if self.args.evaluate_during_training:
-                            # self.evaluate()
+                            self.evaluate()
                             
                             predictions = self.predict(test_dataset=self.eval_dataset).predictions
                             # For classification
