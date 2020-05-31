@@ -8,12 +8,10 @@ from transformers import RobertaTokenizer
 class LongformerForSequenceClassification(nn.Module):
     config_class = LongformerConfig
 
-    def __init__(self, config):
+    def __init__(self, config, longformer):
         super().__init__()
         self.num_labels = config.num_labels
-        print('instantiatin longformer')
-        self.longformer = Longformer.from_pretrained('../longformer-base-4096/', config=config)
-        print('longformer ok!', self.longformer)
+        self.longformer = longformer
         self.classifier = LongformerClassificationHead(config)
 
     def forward(

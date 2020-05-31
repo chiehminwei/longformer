@@ -118,13 +118,13 @@ def main():
     config = LongformerConfig.from_pretrained('longformer-base-4096/')
     config.num_labels = num_labels
     config.attention_mode = 'sliding_chunks'
-
-    print('config ok!', config)
-
+    
     tokenizer = RobertaTokenizer.from_pretrained('roberta-base')
     tokenizer.model_max_length = config.max_position_embeddings
 
-    model = LongformerForSequenceClassification(config)
+    longformer = Longformer.from_pretrained('longformer-base-4096/', config=config)
+
+    model = LongformerForSequenceClassification(config, longformer)
 
     # Get datasets
     train_dataset = MafiascumDataset(data_args, tokenizer=tokenizer) if training_args.do_train else None
