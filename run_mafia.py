@@ -147,7 +147,7 @@ def main():
 
     # import torch_xla.core.xla_model as xm
     # device = xm.xla_device(n=1)
-    device = 'gpu'
+    device = 'cuda'
     
     # Initialize our Trainer
     trainer = Trainer(
