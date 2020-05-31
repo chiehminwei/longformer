@@ -27,7 +27,7 @@ import numpy as np
 from sklearn.metrics import f1_score        
 
 from data.dataset2 import MafiascumDataset, MafiaDataTrainingArguments
-from src.trainer import Trainer
+# from src.trainer import Trainer
 
 from src.model import LongformerForSequenceClassification
 from longformer.longformer import Longformer, LongformerConfig
@@ -36,7 +36,7 @@ from transformers import RobertaTokenizer
 from transformers import EvalPrediction
 from transformers import (
     HfArgumentParser,
-    # Trainer,
+    Trainer,
     TrainingArguments,
     set_seed,
 )
@@ -147,13 +147,13 @@ def main():
 
     # import torch_xla.core.xla_model as xm
     # device = xm.xla_device(n=1)
-    device = 'gpu'
+    # device = 'gpu'
     
     # Initialize our Trainer
     trainer = Trainer(
         model=model,
         args=training_args,
-        device=device,
+        # device=device,
         train_dataset=train_dataset,
         eval_dataset=eval_dataset,
         compute_metrics=compute_metrics,

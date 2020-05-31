@@ -5,6 +5,8 @@ from longformer.longformer import Longformer, LongformerConfig
 from transformers import RobertaTokenizer
 
 
+# [batch_size, ]
+
 class LongformerForSequenceClassification(nn.Module):
     config_class = LongformerConfig
 
@@ -65,8 +67,6 @@ class LongformerForSequenceClassification(nn.Module):
 
         attention_mask = attention_mask * (global_attention_mask + 1)
 
-        print('attention_mask', attention_mask.shape, attention_mask)
-
         outputs = self.longformer(
             input_ids,
             attention_mask=attention_mask,
@@ -74,11 +74,9 @@ class LongformerForSequenceClassification(nn.Module):
             position_ids=position_ids,
             inputs_embeds=inputs_embeds,
         )
-        print('outputs', outputs[0].shape)
         sequence_output = outputs[0]
         logits = self.classifier(sequence_output)
-        print('logits', logits.shape)
-
+        
         outputs = (logits,) + outputs[2:]
         if labels is not None:
             loss_fct = CrossEntropyLoss()
