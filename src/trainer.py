@@ -169,6 +169,8 @@ class Trainer:
         if eval_dataset is None and self.eval_dataset is None:
             raise ValueError("Trainer: evaluation requires an eval_dataset.")
 
+        eval_dataset = eval_dataset if eval_dataset is not None else self.eval_dataset
+
         sampler = SequentialSampler(eval_dataset)
 
         data_loader = DataLoader(
