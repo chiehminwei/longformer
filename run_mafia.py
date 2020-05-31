@@ -30,7 +30,7 @@ from data.dataset2 import MafiascumDataset, MafiaDataTrainingArguments
 from src.trainer import Trainer
 
 from src.model import LongformerForSequenceClassification
-from longformer.longformer import LongformerConfig
+from longformer.longformer import Longformer, LongformerConfig
 from transformers import RobertaTokenizer
 
 from transformers import EvalPrediction
