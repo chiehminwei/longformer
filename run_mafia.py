@@ -119,6 +119,8 @@ def main():
     config.num_labels = num_labels
     config.attention_mode = 'sliding_chunks'
 
+    print('config ok!', config)
+
     tokenizer = RobertaTokenizer.from_pretrained('roberta-base')
     tokenizer.model_max_length = config.max_position_embeddings
 
