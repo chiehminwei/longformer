@@ -24,6 +24,7 @@ from transformers import PreTrainedModel
 from transformers import AdamW, get_linear_schedule_with_warmup
 from transformers import TrainingArguments
 
+import wandb
 # import torch_xla.core.xla_model as xm
 # import torch_xla.debug.metrics as met
 
@@ -143,6 +144,7 @@ class Trainer:
             logger.warning(
                 "You are instantiating a Trainer but Tensorboard is not installed. You should consider installing it."
             )
+        self._setup_wandb()
         set_seed(self.args.seed)
         # Create output directory if needed
         if self.is_world_master():
@@ -397,6 +399,28 @@ class Trainer:
             iterator.write(output)
         else:
             print(output)
+
+    def _setup_wandb(self):
+        """
+        Setup the optional Weights & Biases (`wandb`) integration.
+        One can override this method to customize the setup if needed.  Find more information at https://docs.wandb.com/huggingface
+        You can also override the following environment variables:
+        Environment:
+            WANDB_WATCH:
+                (Optional, ["gradients", "all", "false"]) "gradients" by default, set to "false" to disable gradient logging
+                or "all" to log gradients and parameters
+            WANDB_PROJECT:
+                (Optional): str - "huggingface" by default, set this to a custom string to store results in a different project
+            WANDB_DISABLED:
+                (Optional): boolean - defaults to false, set to "true" to disable wandb entirely
+        """
+        logger.info('Automatic Weights & Biases logging enabled, to disable set os.environ["WANDB_DISABLED"] = "true"')
+        wandb.init(project=os.getenv("WANDB_PROJECT", "huggingface"), config=vars(self.args))
+        # keep track of model topology and gradients
+        if os.getenv("WANDB_WATCH") != "false":
+            wandb.watch(
+                self.model, log=os.getenv("WANDB_WATCH", "gradients"), log_freq=max(100, self.args.logging_steps)
+            )
 
     def _training_step(
         self, model: nn.Module, inputs: Dict[str, torch.Tensor], optimizer: torch.optim.Optimizer
