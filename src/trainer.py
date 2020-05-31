@@ -421,14 +421,16 @@ class Trainer:
         return loss.item()
 
     def is_local_master(self) -> bool:
-        return xm.is_master_ordinal(local=True)
+        return True
+        #return xm.is_master_ordinal(local=True)
        
     def is_world_master(self) -> bool:
         """
         This will be True only in one process, even in distributed mode,
         even when training on multiple machines.
         """
-        return xm.is_master_ordinal(local=False)
+        return True
+        #return xm.is_master_ordinal(local=False)
 
     def save_model(self, output_dir: Optional[str] = None):
         """
