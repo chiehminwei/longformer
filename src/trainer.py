@@ -17,7 +17,7 @@ from torch.utils.data.dataloader import DataLoader
 from torch.utils.data.dataset import Dataset
 from torch.utils.data.distributed import DistributedSampler
 from torch.utils.data.sampler import RandomSampler, Sampler, SequentialSampler
-from tqdm.notebook import tqdm, trange
+from tqdm.auto import tqdm, trange
 
 from transformers import DataCollator, DefaultDataCollator
 from transformers import PreTrainedModel
@@ -308,7 +308,7 @@ class Trainer:
         )
         for epoch in train_iterator:            
 
-            epoch_iterator = tqdm(train_dataloader, desc="Iteration")            
+            epoch_iterator = tqdm(train_dataloader, position=0, leave=True, desc="Iteration")            
             for step, inputs in enumerate(epoch_iterator):
 
                 # Skip past any already trained steps if resuming training
@@ -512,7 +512,7 @@ class Trainer:
         label_ids: torch.Tensor = None
         model.eval()
         
-        for inputs in tqdm(dataloader, desc=description):
+        for inputs in tqdm(dataloader, position=0, leave=True, desc=description):
             has_labels = any(inputs.get(k) is not None for k in ["labels", "lm_labels", "masked_lm_labels"])
 
             for k, v in inputs.items():
