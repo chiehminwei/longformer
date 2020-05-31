@@ -11,7 +11,7 @@ class LongformerForSequenceClassification(nn.Module):
     def __init__(self, config):
         super().__init__()
         self.num_labels = config.num_labels
-        self.longformer = Longformer.from_pretrained('allenai/longformer-base-4096', config=config)
+        self.longformer = Longformer.from_pretrained('../longformer-base-4096', config=config)
         self.classifier = LongformerClassificationHead(config)
 
     def forward(
@@ -65,6 +65,8 @@ class LongformerForSequenceClassification(nn.Module):
 
         attention_mask = attention_mask * (global_attention_mask + 1)
 
+        print('attention_mask', attention_mask.shape, attention_mask)
+
         outputs = self.longformer(
             input_ids,
             attention_mask=attention_mask,
@@ -72,8 +74,10 @@ class LongformerForSequenceClassification(nn.Module):
             position_ids=position_ids,
             inputs_embeds=inputs_embeds,
         )
+        print('outputs', outputs[0].shape)
         sequence_output = outputs[0]
         logits = self.classifier(sequence_output)
+        print('logits', logits.shape)
 
         outputs = (logits,) + outputs[2:]
         if labels is not None:
