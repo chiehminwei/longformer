@@ -325,7 +325,8 @@ class Trainer:
                 ):
                     torch.nn.utils.clip_grad_norm_(model.parameters(), self.args.max_grad_norm)
 
-                    xm.optimizer_step(optimizer)
+                    optimizer.step()
+                    # xm.optimizer_step(optimizer)
                     
                     scheduler.step()
                     model.zero_grad()

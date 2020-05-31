@@ -145,8 +145,9 @@ def main():
         preds = np.argmax(p.predictions, axis=1)
         return acc_and_f1(preds, p.label_ids)
 
-    import torch_xla.core.xla_model as xm
-    device = xm.xla_device(n=1)
+    # import torch_xla.core.xla_model as xm
+    # device = xm.xla_device(n=1)
+    device = 'gpu'
     
     # Initialize our Trainer
     trainer = Trainer(
