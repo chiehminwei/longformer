@@ -355,12 +355,21 @@ class Trainer:
                         if self.args.evaluate_during_training:
                             self.evaluate()
                             
-                            logger.info("***** Test results {} *****".format('mafia'))
                             predictions = self.predict(test_dataset=self.eval_dataset).predictions
                             # For classification
                             predictions = np.argmax(predictions, axis=1)
-                            print(predictions)
-                           
+                            
+                            output_test_file = os.path.join(
+                                self.args.output_dir, "test_results_mafia.txt"
+                            )
+                            self.tb_writer.add_text("predictions {}".format(str(self.global_step)), predictions.tostring())
+                            with open(output_test_file, "w") as writer:
+                                logger.info("***** Test results {} *****".format('mafia'))
+                                writer.write("index\tprediction\n")
+                                for index, item in enumerate(predictions):      
+                                    item = self.eval_dataset.get_labels()[item]
+                                    writer.write("%d\t%s\n" % (index, item))
+
                     if self.args.save_steps > 0 and self.global_step % self.args.save_steps == 0:
                         # In all cases (even distributed/parallel), self.model is always a reference
                         # to the model we want to save.
