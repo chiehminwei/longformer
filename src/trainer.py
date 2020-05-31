@@ -10,6 +10,9 @@ from pathlib import Path
 from typing import Callable, Dict, List, Optional, Tuple
 
 import numpy as np
+import sys
+np.set_printoptions(threshold=sys.maxsize)
+
 import torch
 from packaging import version
 from torch import nn
@@ -353,7 +356,7 @@ class Trainer:
                         self._log(logs)
 
                         if self.args.evaluate_during_training:
-                            self.evaluate()
+                            # self.evaluate()
                             
                             predictions = self.predict(test_dataset=self.eval_dataset).predictions
                             # For classification
@@ -362,7 +365,7 @@ class Trainer:
                             output_test_file = os.path.join(
                                 self.args.output_dir, "test_results_mafia.txt"
                             )
-                            self.tb_writer.add_text("predictions {}".format(str(self.global_step)), predictions.tostring())
+                            print(predictions)
                             with open(output_test_file, "w") as writer:
                                 logger.info("***** Test results {} *****".format('mafia'))
                                 writer.write("index\tprediction\n")
