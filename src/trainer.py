@@ -363,9 +363,12 @@ class Trainer:
 
                         self.save_model(output_dir)
 
-                        xm.rendezvous("saving_optimizer_states")
-                        xm.save(optimizer.state_dict(), os.path.join(output_dir, "optimizer.pt"))
-                        xm.save(scheduler.state_dict(), os.path.join(output_dir, "scheduler.pt"))
+                        torch.save(optimizer.state_dict(), os.path.join(output_dir, "optimizer.pt"))
+                        torch.save(scheduler.state_dict(), os.path.join(output_dir, "scheduler.pt"))
+
+                        # xm.rendezvous("saving_optimizer_states")
+                        # xm.save(optimizer.state_dict(), os.path.join(output_dir, "optimizer.pt"))
+                        # xm.save(scheduler.state_dict(), os.path.join(output_dir, "scheduler.pt"))
                         
                 if self.args.max_steps > 0 and self.global_step > self.args.max_steps:
                     epoch_iterator.close()
@@ -373,9 +376,9 @@ class Trainer:
             if self.args.max_steps > 0 and self.global_step > self.args.max_steps:
                 train_iterator.close()
                 break
-            if self.args.tpu_metrics_debug:
-                # tpu-comment: Logging debug metrics for PyTorch/XLA (compile, execute times, ops, etc.)
-                xm.master_print(met.metrics_report())
+            # if self.args.tpu_metrics_debug:
+            #     # tpu-comment: Logging debug metrics for PyTorch/XLA (compile, execute times, ops, etc.)
+            #     xm.master_print(met.metrics_report())
 
         if self.tb_writer:
             self.tb_writer.close()
@@ -436,7 +439,20 @@ class Trainer:
         you can reload it using from_pretrained().
         Will only save from the world_master process (unless in TPUs).
         """
-        self._save_tpu(output_dir)
+        self._save(output_dir)
+
+    def _save(self, output_dir: Optional[str] = None):
+        output_dir = output_dir if output_dir is not None else self.args.output_dir
+        os.makedirs(output_dir, exist_ok=True)
+        logger.info("Saving model checkpoint to %s", output_dir)
+        # Save a trained model and configuration using `save_pretrained()`.
+        # They can then be reloaded using `from_pretrained()`
+        if not isinstance(self.model, PreTrainedModel):
+            raise ValueError("Trainer.model appears to not be a PreTrainedModel")
+        self.model.save_pretrained(output_dir)
+
+        # Good practice: save your training arguments together with the trained model
+        torch.save(self.args, os.path.join(output_dir, "training_args.bin"))
 
     def _save_tpu(self, output_dir: Optional[str] = None):
         output_dir = output_dir if output_dir is not None else self.args.output_dir
@@ -475,9 +491,9 @@ class Trainer:
 
         self._log(output.metrics)
 
-        if self.args.tpu_metrics_debug:
-            # tpu-comment: Logging debug metrics for PyTorch/XLA (compile, execute times, ops, etc.)
-            xm.master_print(met.metrics_report())
+        # if self.args.tpu_metrics_debug:
+        #     # tpu-comment: Logging debug metrics for PyTorch/XLA (compile, execute times, ops, etc.)
+        #     xm.master_print(met.metrics_report())
 
         return output.metrics
 
@@ -538,10 +554,10 @@ class Trainer:
                         label_ids = torch.cat((label_ids, inputs["labels"].detach()), dim=0)
 
         # tpu-comment: Get all predictions and labels from all worker shards of eval dataset
-        if preds is not None:
-            preds = xm.mesh_reduce("eval_preds", preds, torch.cat)
-        if label_ids is not None:
-            label_ids = xm.mesh_reduce("eval_label_ids", label_ids, torch.cat)
+        # if preds is not None:
+        #     preds = xm.mesh_reduce("eval_preds", preds, torch.cat)
+        # if label_ids is not None:
+        #     label_ids = xm.mesh_reduce("eval_label_ids", label_ids, torch.cat)
 
         # Finally, turn the aggregated tensors into numpy arrays.
         if preds is not None:
