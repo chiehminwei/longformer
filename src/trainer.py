@@ -20,6 +20,7 @@ from torch.utils.data.dataloader import DataLoader
 from torch.utils.data.dataset import Dataset
 from torch.utils.data.distributed import DistributedSampler
 from torch.utils.data.sampler import RandomSampler, Sampler, SequentialSampler
+from torchsampler import ImbalancedDatasetSampler
 from tqdm.auto import tqdm, trange
 
 from transformers import DataCollator, DefaultDataCollator
@@ -157,7 +158,7 @@ class Trainer:
         if self.train_dataset is None:
             raise ValueError("Trainer: training requires a train_dataset.")
         
-        train_sampler = RandomSampler(self.train_dataset)
+        train_sampler = ImbalancedDatasetSampler(self.train_dataset)
 
         data_loader = DataLoader(
             self.train_dataset,
@@ -496,7 +497,7 @@ class Trainer:
         #     raise ValueError("Trainer.model appears to not be a PreTrainedModel")
         # self.model.save_pretrained(output_dir)
 
-        torch.save(model.state_dict(), output_dir)
+        torch.save(self.model.state_dict(), output_dir)
 
         # Good practice: save your training arguments together with the trained model
         torch.save(self.args, os.path.join(output_dir, "training_args.bin"))
