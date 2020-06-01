@@ -543,8 +543,7 @@ class Trainer:
         # if not isinstance(self.model, PreTrainedModel):
         #     raise ValueError("Trainer.model appears to not be a PreTrainedModel")
         # self.model.save_pretrained(output_dir)
-
-        torch.save(self.model.state_dict(), output_dir)
+        torch.save(self.model.state_dict(), os.path.join(output_dir, "model.ckpt") )
 
         # Good practice: save your training arguments together with the trained model
         torch.save(self.args, os.path.join(output_dir, "training_args.bin"))
